@@ -1,0 +1,143 @@
+{
+  "project_name": "Shift Change - Opportunity Workspace",
+  "theme": {
+    "mode": "dark",
+    "aesthetic": "Cinematic Brutalism / Linear App Premium Style",
+    "description": "A movement/manifesto landing page. Pitch black backgrounds, high-contrast porcelain text, aggressive typography, deliberate spacing, and premium motion. No generic marketplace vibes. It feels like an exclusive, high-end operating system for opportunity."
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Clash Display, sans-serif",
+      "body": "Manrope, sans-serif",
+      "mono_accent": "JetBrains Mono, monospace"
+    },
+    "hierarchy": {
+      "h1": "text-5xl md:text-7xl font-semibold tracking-tighter leading-none",
+      "h2": "text-4xl md:text-5xl font-medium tracking-tight",
+      "h3": "text-2xl md:text-3xl font-medium tracking-tight",
+      "body": "text-lg md:text-xl font-light text-[#F7F8F8]/80 leading-relaxed",
+      "labels": "font-mono text-xs uppercase tracking-[0.2em] text-[#E4F222]"
+    },
+    "banned_fonts": ["Inter", "Space Grotesk", "Roboto", "Open Sans", "Lato"]
+  },
+  "colors": {
+    "background": {
+      "primary": "#08090a",
+      "surface": "#161718",
+      "surface_hover": "#1c1d1e"
+    },
+    "text": {
+      "primary": "#F7F8F8",
+      "secondary": "#A1A1AA",
+      "muted": "#52525B"
+    },
+    "accent": {
+      "primary": "#E4F222",
+      "primary_hover": "#D4E01B",
+      "danger": "#FF3B30"
+    },
+    "borders": {
+      "subtle": "rgba(255, 255, 255, 0.1)",
+      "strong": "rgba(255, 255, 255, 0.2)"
+    },
+    "forbidden_colors": ["#7351B7", "#1B93A4"]
+  },
+  "spacing_and_layout": {
+    "grid": "Use a 4px base spacing scale. Strict adherence to optical alignment.",
+    "section_padding": "py-24 md:py-40 px-6 md:px-12",
+    "containers": "max-w-7xl mx-auto w-full",
+    "glassmorphism": "backdrop-blur-xl bg-[#08090a]/70 border-b border-white/10"
+  },
+  "motion_and_interactions": {
+    "scroll_engine": "Lenis for smooth momentum scrolling (Critical).",
+    "animation_library": "Framer Motion",
+    "hero_reveal": "Masked line-by-line text reveal on load. Wrap text lines in overflow-hidden spans, animate Y from 100% to 0%.",
+    "parallax": "Use scroll-linked parallax on the Hero video background (zoom out slightly as user scrolls down).",
+    "scroll_reveals": "Elements fade in and translate Y upwards by 40px when entering viewport (easeOut, 0.6s duration).",
+    "hover_states": "Interactive elements should have distinct micro-interactions (e.g., scale up by 1.02, border glow).",
+    "spotlight_effect": "Implement a mouse-following radial gradient spotlight on the Split Screen audience cards."
+  },
+  "images": {
+    "hero_video": "/webpage.mp4",
+    "maker_artisan": "https://images.unsplash.com/photo-1634021086770-12b626224f7a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHw0fHxhcnRpc2FuJTIwd29ya2luZyUyMGRhcmslMjBjaW5lbWF0aWN8ZW58MHx8fHwxNzg0MDgxMjA0fDA&ixlib=rb-4.1.0&q=85",
+    "spotlight_concept": "https://images.unsplash.com/photo-1615754890634-69ac8bca7189?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwyfHxjcmVhdGl2ZSUyMHBlcnNvbiUyMHNwb3RsaWdodCUyMGRhcmt8ZW58MHx8fHwxNzg0MDgxMjAzfDA&ixlib=rb-4.1.0&q=85",
+    "workspace_tools": "https://images.unsplash.com/photo-1777861845890-19fcc843e33a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w8NjY2NjV8MHwxfHNlYXJjaHwyfHxtaW5pbWFsaXN0JTIwdG9vbHMlMjBkYXJrfGVufDB8fHx8MTc4NDA4MTIwM3ww&ixlib=rb-4.1.0&q=85",
+    "treatment": "Real photography treated deliberately. Use grayscale or highly desaturated styling, aggressive clipped masks (sharp corners or specific polygon clips), and high-contrast ambient lighting to fit the dark cinematic theme. NO rounded corners > 8px."
+  },
+  "components": {
+    "header": "Fixed top, z-50. bg-[#08090a]/80 with backdrop-blur-xl and border-b border-white/10. NEVER fully transparent. Contains logo, minimal nav, and 'Start Earning' CTA in Neon Lime.",
+    "buttons": {
+      "primary": "bg-[#E4F222] text-[#08090a] font-medium px-8 py-4 text-sm uppercase tracking-wider hover:bg-[#D4E01B] transition-colors rounded-none",
+      "secondary": "bg-transparent text-[#F7F8F8] border border-white/20 font-medium px-8 py-4 text-sm uppercase tracking-wider hover:border-[#E4F222] hover:text-[#E4F222] transition-colors rounded-none"
+    },
+    "marquee": "Use react-fast-marquee for one slow editorial marquee in The Shift section. Serif or Mono font, text-8xl outline-only (text-transparent, stroke-white/20)."
+  },
+  "sections": [
+    {
+      "name": "1. Cinematic Kinetic Hero",
+      "layout": "100vh height, relative, overflow-hidden.",
+      "background": "Video background mapped to /webpage.mp4. Absolute inset-0, object-cover, with a bg-[#050505]/70 dark overlay.",
+      "content": "Centered. Headline: 'Stop Looking for Work. Start Creating Opportunity.' Subheadline: 'Your skills are worth more than you think. Turn your skills, knowledge, hobbies... into real income.'",
+      "action": "Primary CTA: 'Start Earning Today', Secondary CTA: 'Find Help Today'.",
+      "motion": "Video scales down from 1.2 to 1.0 on scroll. Masked line-by-line reveal for headline."
+    },
+    {
+      "name": "2. The Problem (Chapter 01)",
+      "layout": "Grid layout, heavy negative space.",
+      "content": "Brutalist Mono Chapter Label: '01 / THE BROKEN SYSTEM'. Massive minimal text block focusing on how people are treated as resumes, not creators."
+    },
+    {
+      "name": "3. The Shift (Chapter 02)",
+      "layout": "Relative container with overflowing marquee background.",
+      "content": "Text transitions from 'Who\\'s hiring?' (strikethrough/faded) to 'What can I offer today?' (bright/neon). One extremely slow, massive editorial marquee behind the text reading 'OPPORTUNITY WORKSPACE'."
+    },
+    {
+      "name": "4. Split Screen Audience Cards",
+      "layout": "Grid cols-1 md:grid-cols-2 gap-0 border-y border-white/10.",
+      "content": "Left Card: 'I Want To Earn' (Black bg). Right Card: 'I Need Help' (Deep Slate bg). Both contain hoverable lists of skills/needs. Use the provided artisan/workspace images as hover-reveals or clipped accents.",
+      "motion": "Implement a subtle Framer Motion mouse spotlight effect (radial-gradient following mouse cursor) on these cards."
+    },
+    {
+      "name": "5. Mission Manifesto",
+      "layout": "Stark, purely typographic section with numbered chapters.",
+      "content": "Focus on 'People already have value. They just don\\'t have the infrastructure.' Minimal text, giant margins."
+    },
+    {
+      "name": "6. Transformation (Old Way vs New Way)",
+      "layout": "Visual 2-column comparison or a timeline flow.",
+      "content": "Old Way (Gig Marketplace/Job Board): Faded text, grayscale. New Way (Opportunity Workspace): Crisp, glowing white text with Neon Lime accents."
+    },
+    {
+      "name": "7. Closing",
+      "layout": "Massive typographic reveal.",
+      "content": "Headline: 'Opportunity is already around you.' scales down from massive to readable size on scroll. Final CTA buttons."
+    }
+  ],
+  "accessibility": {
+    "contrast": "Strict APCA/WCAG AA compliance. Ensure text over video has sufficient contrast via heavy dark overlays.",
+    "testing": "All interactive elements (buttons, links, form inputs) MUST include data-testid attributes."
+  },
+  "instructions_to_main_agent": [
+    "Install required dependencies: framer-motion, @studio-freight/lenis, react-fast-marquee, @phosphor-icons/react",
+    "Setup Lenis smooth scrolling in a top-level layout or App component.",
+    "Use pure HTML + Tailwind for all structural and marketing layouts. DO NOT use rigid Shadcn containers (like Card) for these sections. Use raw divs, sections, and framer-motion.",
+    "Apply exact font stacks: Clash Display for Headings, JetBrains Mono for mono labels, Manrope for body text. Link these via Google Fonts or standard imports.",
+    "No generic rounded corners (e.g., rounded-xl) unless intentionally part of the 'Apple/Linear' glassmorphism pattern. Keep it sharp (rounded-none or max rounded-sm) to maintain the brutalist/manifesto edge.",
+    "Follow the 4px Linear spacing pattern. Add excessive padding between sections (py-32 or py-40).",
+    "Never use pure black or pure white unless intentionally doing brutalist high-contrast. Base background is #08090a.",
+    "Implement the masked text reveal in the Hero using Framer Motion (overflow: hidden wrapper on lines, y: '100%' -> 0%).",
+    "Use 'react-fast-marquee' for the single editorial marquee. Keep it very slow.",
+    "Add 'data-testid' to all buttons and CTAs (e.g., data-testid='hero-start-earning-btn').",
+    "Create depth through 1px semi-transparent borders (border-white/10) rather than muddy box-shadows."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy and 1px strokes.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur). NEVER use fully transparent backgrounds under headers.",
+    "You MUST NOT apply universal transition. Eg: transition: all. Always add transitions for specific properties.",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap."
+  ]
+}
