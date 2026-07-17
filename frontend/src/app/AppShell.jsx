@@ -75,7 +75,7 @@ export function AppShell({ children }) {
               <div className="text-sm truncate">{user.name}</div>
               <div className="font-mono-accent text-[9px] uppercase tracking-[0.2em] text-[#E4F222]">{user.role}</div>
             </div>
-            <button onClick={() => { logout(); nav("/"); }} data-testid="logout-btn" className="text-white/50 hover:text-white transition-colors">
+            <button onClick={() => { logout(); nav("/"); }} data-testid="nav-logout" className="text-white/50 hover:text-white transition-colors">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
