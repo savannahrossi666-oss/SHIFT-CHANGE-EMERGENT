@@ -312,28 +312,49 @@ async def action_shift(shift_id: str, body: ShiftAction, user=Depends(current_us
             raise HTTPException(400, "Shift is not open")
         wsid = uid("ws")
         updates = {"status": "accepted", "accepted_by": user["user_id"], "workspace_id": wsid}
-        # Create workspace
+        # Create workspace + auto-seed a warm welcome message from the seeker/owner
         await db.workspaces.insert_one({
             "workspace_id": wsid,
             "shift_id": shift_id,
             "shift_title": s["title"],
+            "shift_price": s["price"],
+            "shift_currency": s.get("currency", "USD"),
+            "owner_id": s["owner_id"],
+            "accepted_by": user["user_id"],
             "participants": [s["owner_id"], user["user_id"]],
             "tasks": [], "notes": "",
-            "payment_status": "pending",   # pending | paid | released
-            "timeline": [{"ts": now().isoformat(), "type": "created", "text": f"Workspace created — {s['title']}", "by": user["user_id"]}],
+            "payment_status": "pending",   # pending | held | released
+            "timeline": [
+                {"ts": now().isoformat(), "type": "created", "text": f"Workspace opened — {s['title']}", "by": user["user_id"]},
+                {"ts": now().isoformat(), "type": "accepted", "text": f"{user['name']} accepted the shift", "by": user["user_id"]},
+            ],
             "created_at": now().isoformat(),
+        })
+        # Auto-seed a welcome message from the shift owner
+        await db.messages.insert_one({
+            "msg_id": uid("m"), "workspace_id": wsid, "user_id": s["owner_id"], "user_name": s["owner_name"],
+            "text": f"Hey {user['name'].split(' ')[0]} — thanks for taking this on! Let me know what info you need to get started. 👋",
+            "ts": now().isoformat(),
         })
         await notify(s["owner_id"], f"{user['name']} accepted your shift: {s['title']}", f"/workspace/{wsid}")
     elif body.action == "complete":
         if s["owner_id"] != user["user_id"] and s["accepted_by"] != user["user_id"]:
             raise HTTPException(403, "Not a participant")
-        updates = {"status": "completed"}
+        updates = {"status": "completed", "completed_at": now().isoformat()}
         if s.get("workspace_id"):
+            w = await db.workspaces.find_one({"workspace_id": s["workspace_id"]}, {"_id": 0}) or {}
+            # If payment was held, release it to the earner; simulate wallet balance movement
+            release_ok = w.get("payment_status") == "held"
+            new_status = "released" if release_ok else w.get("payment_status", "pending")
             await db.workspaces.update_one(
                 {"workspace_id": s["workspace_id"]},
-                {"$set": {"payment_status": "released"},
-                 "$push": {"timeline": {"ts": now().isoformat(), "type": "completed", "text": "Shift completed", "by": user["user_id"]}}},
+                {"$set": {"payment_status": new_status, "completed_at": now().isoformat()},
+                 "$push": {"timeline": {"ts": now().isoformat(), "type": "completed", "text": "Shift marked complete", "by": user["user_id"]}}},
             )
+            if release_ok and s.get("accepted_by"):
+                await db.users.update_one({"user_id": s["accepted_by"]},
+                                          {"$inc": {"wallet_balance": float(s.get("price", 0))}})
+                await notify(s["accepted_by"], f"${s['price']} released for {s['title']}", f"/workspace/{s['workspace_id']}")
     elif body.action == "cancel":
         if s["owner_id"] != user["user_id"]:
             raise HTTPException(403, "Only owner can cancel")
@@ -446,15 +467,54 @@ async def get_file(workspace_id: str, file_id: str, user=Depends(current_user)):
 
 
 @api.post("/workspaces/{workspace_id}/pay")
-async def mark_paid(workspace_id: str, user=Depends(current_user)):
-    """MOCKED PAYMENT — Stripe integration is a follow-up (needs playbook + keys)."""
+async def mark_paid(workspace_id: str, body: dict = None, user=Depends(current_user)):
+    """SIMULATED PAYMENT — records a receipt in escrow. Funds release on completion.
+    Real Stripe integration is a follow-up (needs playbook + keys).
+    """
+    body = body or {}
     w = await db.workspaces.find_one({"workspace_id": workspace_id})
     if not w or user["user_id"] not in w["participants"]:
         raise HTTPException(404, "Not found")
-    await db.workspaces.update_one({"workspace_id": workspace_id},
-                                   {"$set": {"payment_status": "paid"},
-                                    "$push": {"timeline": {"ts": now().isoformat(), "type": "paid", "text": "Payment marked (MOCKED)", "by": user["user_id"]}}})
-    return {"ok": True, "payment_status": "paid"}
+    if w.get("payment_status") in ("held", "released"):
+        raise HTTPException(400, "Already paid")
+    # Simulate a card charge — no real charge, no PAN stored
+    last4 = (body.get("card_last4") or "4242")[-4:]
+    receipt = {
+        "receipt_id": uid("rc"),
+        "workspace_id": workspace_id,
+        "shift_id": w.get("shift_id"),
+        "amount": float(w.get("shift_price") or 0),
+        "currency": w.get("shift_currency", "USD"),
+        "payer_id": user["user_id"],
+        "payer_name": user["name"],
+        "payee_id": w.get("accepted_by"),
+        "method": "card",
+        "card_brand": body.get("card_brand", "Visa"),
+        "card_last4": last4,
+        "status": "held_in_escrow",
+        "created_at": now().isoformat(),
+        "note": "SIMULATED — no real charge",
+    }
+    await db.receipts.insert_one(receipt)
+    receipt.pop("_id", None)
+    await db.workspaces.update_one(
+        {"workspace_id": workspace_id},
+        {"$set": {"payment_status": "held", "receipt_id": receipt["receipt_id"]},
+         "$push": {"timeline": {"ts": now().isoformat(), "type": "paid", "text": f"Payment held in escrow — ${receipt['amount']} · •••• {last4}", "by": user["user_id"]}}},
+    )
+    if w.get("accepted_by"):
+        await notify(w["accepted_by"], f"Payment of ${receipt['amount']} held in escrow — release on completion", f"/workspace/{workspace_id}")
+    return {"ok": True, "payment_status": "held", "receipt": receipt}
+
+
+@api.get("/workspaces/{workspace_id}/receipt")
+async def get_receipt(workspace_id: str, user=Depends(current_user)):
+    w = await db.workspaces.find_one({"workspace_id": workspace_id})
+    if not w or user["user_id"] not in w["participants"]:
+        raise HTTPException(404, "Not found")
+    if not w.get("receipt_id"):
+        return None
+    return await db.receipts.find_one({"receipt_id": w["receipt_id"]}, {"_id": 0})
 
 
 # ============ REVIEWS ============
@@ -616,3 +676,122 @@ app.add_middleware(
 @app.on_event("shutdown")
 async def shutdown():
     client.close()
+
+
+# ============ DEMO SEED ============
+DEMO_USERS = [
+    {
+        "user_id": "demo_maya_ph",
+        "email": "maya@demo.shiftchange.io",
+        "name": "Maya Chen",
+        "role": "earner",
+        "auth_provider": "demo",
+        "photo": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=facearea&facepad=2&w=400&q=80",
+        "bio": "Portrait & event photographer. 8 years turning ordinary rooms into golden-hour memories. Nikon Z8, always ready.",
+        "skills": ["Photography", "Photo editing", "Lightroom", "Event coverage"],
+        "services": ["Portrait shoots", "Small event coverage", "Product photography"],
+        "products": [], "equipment": ["Nikon Z8", "Godox lighting kit", "Sony wireless mics"],
+        "portfolio": [{"title": "Rooftop wedding — Brooklyn", "url": "#"}, {"title": "Coffee brand shoot", "url": "#"}],
+        "location": "Brooklyn, NY",
+        "verified": True, "rating": 4.9, "review_count": 47, "wallet_balance": 1240.0,
+    },
+    {
+        "user_id": "demo_diego_dev",
+        "email": "diego@demo.shiftchange.io",
+        "name": "Diego Alvarez",
+        "role": "earner",
+        "auth_provider": "demo",
+        "photo": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=facearea&facepad=2&w=400&q=80",
+        "bio": "Full-stack dev (React, Django, Postgres). I build MVPs in 2 weeks, not 2 months. Ex-Stripe eng.",
+        "skills": ["React", "Django", "Postgres", "TypeScript", "System design"],
+        "services": ["MVP builds", "Code review", "Migration audits"],
+        "products": [], "equipment": ["M3 MacBook Pro"],
+        "portfolio": [{"title": "Fintech dashboard — 2 weeks", "url": "#"}, {"title": "AI intake form for a clinic", "url": "#"}],
+        "location": "Austin, TX",
+        "verified": True, "rating": 5.0, "review_count": 19, "wallet_balance": 4300.0,
+    },
+    {
+        "user_id": "demo_jordan_tutor",
+        "email": "jordan@demo.shiftchange.io",
+        "name": "Jordan Okafor",
+        "role": "earner",
+        "auth_provider": "demo",
+        "photo": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&facepad=2&w=400&q=80",
+        "bio": "Math tutor, SAT specialist. Kids average +180 points after 6 sessions with me.",
+        "skills": ["Algebra", "Calculus", "SAT Math", "Study strategy"],
+        "services": ["Weekly SAT prep", "College math", "Test-week bootcamps"],
+        "products": [], "equipment": [],
+        "portfolio": [], "location": "Chicago, IL",
+        "verified": False, "rating": 4.8, "review_count": 26, "wallet_balance": 780.0,
+    },
+    {
+        "user_id": "demo_avery_seek",
+        "email": "avery@demo.shiftchange.io",
+        "name": "Avery Nash",
+        "role": "seeker",
+        "auth_provider": "demo",
+        "photo": "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=facearea&facepad=2&w=400&q=80",
+        "bio": "Founder of a small candle studio. Always needing help — from photography to a truck to move stock.",
+        "skills": [], "services": [], "products": ["Soy candles"], "equipment": [],
+        "portfolio": [], "location": "Portland, OR",
+        "verified": True, "rating": 4.7, "review_count": 8, "wallet_balance": 0.0,
+    },
+]
+
+DEMO_SHIFTS = [
+    {"owner_id": "demo_avery_seek", "kind": "service", "title": "Product photography for candle line launch",
+     "description": "Need 20 clean product shots + 6 lifestyle shots for our fall collection. Studio is set up in Portland — bring your camera. Turnaround 5 days.",
+     "price": 640, "tags": ["photography", "product", "small business"], "location": "Portland, OR", "delivery": "onsite"},
+    {"owner_id": "demo_avery_seek", "kind": "gig", "title": "Help load a moving truck this Saturday",
+     "description": "2 hours, one flight of stairs. I'll provide the truck + straps. Just need a strong friendly human.",
+     "price": 90, "tags": ["moving", "one-time"], "location": "Portland, OR", "delivery": "onsite"},
+    {"owner_id": "demo_diego_dev", "kind": "consultation", "title": "1-hour system design review",
+     "description": "I'll review your codebase, database schema, and API design and leave a written playbook with prioritized fixes. Great for pre-launch teams.",
+     "price": 220, "tags": ["consulting", "engineering"], "location": None, "delivery": "remote"},
+    {"owner_id": "demo_maya_ph", "kind": "service", "title": "Golden-hour portrait session",
+     "description": "90-minute shoot at a location of your choice in NYC. Includes 12 edited high-res photos. Great for personal branding, LinkedIn, dating profiles that don't suck.",
+     "price": 380, "tags": ["photography", "portraits"], "location": "New York, NY", "delivery": "onsite"},
+    {"owner_id": "demo_maya_ph", "kind": "rental", "title": "Rent my Godox 3-light kit for a weekend",
+     "description": "AD200 Pros, softboxes, stands. Local pickup in Brooklyn only. Insurance recommended.",
+     "price": 120, "tags": ["rental", "lighting"], "location": "Brooklyn, NY", "delivery": "onsite"},
+    {"owner_id": "demo_jordan_tutor", "kind": "service", "title": "Weekly SAT Math prep (4 sessions)",
+     "description": "Four 90-min sessions, all remote, tailored to student's diagnostic. Includes 3 practice tests + written progress report.",
+     "price": 480, "tags": ["tutoring", "SAT"], "location": None, "delivery": "remote"},
+    {"owner_id": "demo_diego_dev", "kind": "product", "title": "Ready-to-deploy Next.js starter with auth + Stripe",
+     "description": "A production-tested Next.js 15 template with Google auth, Stripe subscriptions, and admin dashboard. Save yourself 2 weeks.",
+     "price": 149, "tags": ["template", "nextjs", "stripe"], "location": None, "delivery": "remote"},
+    {"owner_id": "demo_avery_seek", "kind": "custom", "title": "Need a friendly designer to refresh my Instagram grid",
+     "description": "Not looking for logos — just someone with taste to redo my 24-post grid in a cohesive palette. Budget flexible.",
+     "price": 300, "tags": ["design", "social media"], "location": None, "delivery": "remote"},
+]
+
+
+async def seed_demo():
+    """Idempotently seed demo users + shifts so any new signup sees a live-looking marketplace."""
+    existing = await db.users.count_documents({"auth_provider": "demo"})
+    if existing >= len(DEMO_USERS):
+        return
+    for u in DEMO_USERS:
+        if not await db.users.find_one({"user_id": u["user_id"]}):
+            await db.users.insert_one({**u, "created_at": now().isoformat()})
+    if await db.shifts.count_documents({"owner_id": {"$in": [u["user_id"] for u in DEMO_USERS]}}) == 0:
+        for s in DEMO_SHIFTS:
+            owner = next(u for u in DEMO_USERS if u["user_id"] == s["owner_id"])
+            await db.shifts.insert_one({
+                "shift_id": uid("shift"),
+                "owner_id": owner["user_id"], "owner_name": owner["name"], "owner_role": owner["role"],
+                "kind": s["kind"], "title": s["title"], "description": s["description"],
+                "price": s["price"], "currency": "USD", "tags": s["tags"],
+                "location": s.get("location"), "delivery": s.get("delivery"),
+                "status": "open", "accepted_by": None, "workspace_id": None,
+                "created_at": now().isoformat(),
+            })
+    logger.info("Demo seed complete — %d users + %d shifts", len(DEMO_USERS), len(DEMO_SHIFTS))
+
+
+@app.on_event("startup")
+async def _startup():
+    try:
+        await seed_demo()
+    except Exception as e:
+        logger.exception("seed_demo failed: %s", e)

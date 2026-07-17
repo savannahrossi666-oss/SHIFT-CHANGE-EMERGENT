@@ -205,9 +205,23 @@ class TestWorkspace:
 
     def test_pay_mocked(self, alice, accepted_workspace):
         wsid = accepted_workspace["workspace_id"]
-        r = requests.post(f"{API}/workspaces/{wsid}/pay", headers=auth_headers(alice["token"]))
-        assert r.status_code == 200
-        assert r.json()["payment_status"] == "paid"
+        r = requests.post(f"{API}/workspaces/{wsid}/pay",
+                          json={"card_brand": "Visa", "card_last4": "4242"},
+                          headers=auth_headers(alice["token"]))
+        assert r.status_code == 200, r.text
+        body = r.json()
+        assert body["payment_status"] == "held"
+        assert body["receipt"]["status"] == "held_in_escrow"
+        assert body["receipt"]["card_last4"] == "4242"
+        # Double payment rejected
+        r2 = requests.post(f"{API}/workspaces/{wsid}/pay",
+                           json={"card_brand": "Visa", "card_last4": "4242"},
+                           headers=auth_headers(alice["token"]))
+        assert r2.status_code == 400
+        # GET receipt
+        r3 = requests.get(f"{API}/workspaces/{wsid}/receipt", headers=auth_headers(alice["token"]))
+        assert r3.status_code == 200
+        assert r3.json()["status"] == "held_in_escrow"
 
     def test_non_participant_denied(self, accepted_workspace):
         # signup a fresh user
@@ -224,6 +238,59 @@ class TestWorkspace:
                           json={"action": "complete"}, headers=auth_headers(alice["token"]))
         assert r.status_code == 200
         assert r.json()["status"] == "completed"
+
+    def test_welcome_chat_seeded_on_accept(self, alice, bob):
+        # Bob posts, Alice accepts -> expect a welcome message from Bob mentioning Alice
+        r = requests.post(f"{API}/shifts", json={
+            "kind": "service", "title": f"TEST welcome {int(time.time())}",
+            "description": "d", "price": 25, "tags": ["x"]
+        }, headers=auth_headers(bob["token"]))
+        sid = r.json()["shift_id"]
+        r = requests.post(f"{API}/shifts/{sid}/action", json={"action": "accept"},
+                          headers=auth_headers(alice["token"]))
+        assert r.status_code == 200
+        wsid = r.json()["workspace_id"]
+        w = requests.get(f"{API}/workspaces/{wsid}", headers=auth_headers(alice["token"])).json()
+        assert len(w["messages"]) >= 1
+        alice_first = alice["user"]["name"].split(" ")[0]
+        assert any(alice_first in m["text"] for m in w["messages"]), f"welcome msg missing Alice's first name: {w['messages']}"
+        # workspace enrichment fields
+        assert "shift_price" in w and "shift_currency" in w
+        assert w["owner_id"] == bob["user"]["user_id"]
+        assert w["accepted_by"] == alice["user"]["user_id"]
+
+    def test_pay_then_complete_releases_wallet(self, alice, bob):
+        # Get Alice's wallet baseline
+        w0 = requests.get(f"{API}/wallet", headers=auth_headers(alice["token"])).json()
+        base_balance = float(w0["balance"])
+        base_completed = w0["completed_shifts"]
+        price = 77.0
+        # Bob creates shift, Alice accepts, Alice pays? No — payer is the SEEKER (shift owner) typically,
+        # but any participant can pay in current impl. Bob (owner/seeker) pays.
+        r = requests.post(f"{API}/shifts", json={
+            "kind": "service", "title": f"TEST pay+complete {int(time.time())}",
+            "description": "d", "price": price, "tags": ["x"]
+        }, headers=auth_headers(bob["token"]))
+        sid = r.json()["shift_id"]
+        r = requests.post(f"{API}/shifts/{sid}/action", json={"action": "accept"},
+                          headers=auth_headers(alice["token"]))
+        wsid = r.json()["workspace_id"]
+        r = requests.post(f"{API}/workspaces/{wsid}/pay",
+                          json={"card_brand": "Visa", "card_last4": "1111"},
+                          headers=auth_headers(bob["token"]))
+        assert r.status_code == 200, r.text
+        assert r.json()["payment_status"] == "held"
+        # Complete
+        r = requests.post(f"{API}/shifts/{sid}/action", json={"action": "complete"},
+                          headers=auth_headers(alice["token"]))
+        assert r.status_code == 200
+        # Workspace payment_status should be released
+        w = requests.get(f"{API}/workspaces/{wsid}", headers=auth_headers(alice["token"])).json()
+        assert w["payment_status"] == "released", w
+        # Alice's wallet incremented by price
+        w1 = requests.get(f"{API}/wallet", headers=auth_headers(alice["token"])).json()
+        assert abs(float(w1["balance"]) - (base_balance + price)) < 0.001, (base_balance, w1)
+        assert w1["completed_shifts"] == base_completed + 1
 
 
 # ---------- Reviews / Notifications / Wallet / Recs ----------
@@ -259,6 +326,24 @@ class TestMisc:
         r = requests.get(f"{API}/recommendations", headers=auth_headers(bob["token"]))
         assert r.status_code == 200
         assert isinstance(r.json(), list)
+
+    def test_demo_seed_shifts_present(self, alice):
+        # /api/shifts should include at least 8 open demo shifts
+        r = requests.get(f"{API}/shifts", headers=auth_headers(alice["token"]))
+        assert r.status_code == 200
+        shifts = r.json()
+        demo_owners = {"demo_maya_ph", "demo_diego_dev", "demo_jordan_tutor", "demo_avery_seek"}
+        demo_shifts = [s for s in shifts if s["owner_id"] in demo_owners]
+        assert len(demo_shifts) >= 8, f"expected >=8 demo shifts, got {len(demo_shifts)}"
+        titles = " ".join(s["title"] for s in demo_shifts)
+        assert "Golden-hour" in titles or "SAT Math" in titles
+
+    def test_recommendations_returns_demo(self, alice):
+        # Alice is earner — recommendations should fall back to open demo shifts
+        r = requests.get(f"{API}/recommendations", headers=auth_headers(alice["token"]))
+        assert r.status_code == 200
+        recs = r.json()
+        assert len(recs) >= 1
 
 
 # ---------- WebSocket ----------

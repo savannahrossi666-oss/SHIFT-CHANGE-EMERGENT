@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AppShell, PageHeader } from "./AppShell";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
+import { OnboardingChecklist } from "./Onboarding";
 import { ArrowUpRight, Plus, Star, Sparkles, Briefcase, TrendingUp } from "lucide-react";
 
 export function Dashboard() {
@@ -41,6 +42,9 @@ export function Dashboard() {
       />
 
       <div className="px-6 md:px-10 py-10 space-y-14">
+        {/* Onboarding checklist — first-run guided loop */}
+        <OnboardingChecklist user={user} myShifts={mine} workspaces={ws} />
+
         {/* Stat row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Stat icon={Briefcase} label="Active workspaces" value={ws.filter((w) => w.payment_status !== "released").length} />

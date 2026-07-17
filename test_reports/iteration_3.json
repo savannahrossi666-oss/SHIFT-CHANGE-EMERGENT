@@ -1,0 +1,38 @@
+{
+  "summary": "Full backend + frontend E2E for UX-polish iteration. Backend pytest: 28/28 PASS including new tests for demo seed (>=8 open demo shifts), welcome chat auto-seeded on accept (mentions accepter's first name), enriched workspace docs (shift_price/currency/owner_id/accepted_by), simulated pay flow that returns receipt held_in_escrow + double-payment rejected (400) + GET /receipt works, and pay-then-complete releases funds + increments earner wallet_balance by shift.price. Frontend E2E: homepage manifesto intact; fresh signup as seeker lands on /dashboard; OnboardingChecklist (data-testid=onboarding-checklist) with all 6 numbered steps visible; dismiss hides + persists via localStorage sc_onboarding_dismissed=1; /shifts on fresh account shows demo titles (Golden-hour, SAT Math, Product photography, system design, Godox); accept flow opens workspace with welcome chat mentioning the accepter's first name; Payment tab renders 4-stage escrow tracker (Posted/Accepted/Held/Released) + big $ amount hero + StatusPill; pay-btn opens PaymentModal, form pre-fills 4242…/12/28/123, submit → payment-processing → payment-success with receipt rows (Receipt id, Amount, Method Visa ••••4242, Status Held in escrow) → payment-done closes; after payment, header/tab shows complete-btn; complete opens CompletionModal (rate-1..5 + review-text + submit-review-modal) then celebration-done. No console errors on happy path.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Signup error rendering", "issue": "When backend returns a pydantic validation error (422 with FastAPI detail=[{...}]), the signup form displays '[object Object]' instead of a readable message. Repro: try signing up with a '.test' TLD email (which is what the problem statement asked us to use, e.g. polish+{ts}@sc.test) → backend returns 422 → UI renders '[object Object]'. Fix: normalize error extraction in AuthPages.jsx / api.js to stringify FastAPI validation payloads (detail array → first msg).", "selector": "signup err <p class=text-[#FF3B30]>", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [
+      {"flow": "Signup with .test TLD", "issue": "Backend pydantic EmailStr rejects '.test' TLD as reserved (email-validator library). The problem statement explicitly instructs using 'polish+{ts}@sc.test' — this returns 422. Workaround used: 'polish+{ts}@sctest.io'. Not a regression from prior iteration (same behavior), but the E2E instructions won't work as-written on any tester copy-pasting the exact email pattern. Fix option: switch EmailStr to a permissive validator or drop .test entirely from prod docs.", "affected_selectors": ["signup-email"]}
+    ],
+    "design_issues": [
+      {"screen": "Payment tab escrow tracker (pending state)", "issues": ["When payment_status='pending', stage 3 'PAYMENT HELD IN ESCROW' is highlighted/pulsing (via active: pending) while the header StatusPill correctly shows 'AWAITING PAYMENT'. Visually the tracker leaps to the next-step preview instead of showing stage 2 as the current stage — creates cognitive dissonance with the pill. Consider marking stage 2 (Accepted) as active-current until payment is made."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix signup error rendering to unwrap FastAPI 422 detail array (currently shows '[object Object]').",
+    "Either accept .test TLD server-side or update the problem statement/docs to use a real-looking TLD (e.g. sctest.io).",
+    "Optional: rework the escrow tracker's 'active' logic so the current stage (not the next stage) is highlighted."
+  ],
+  "critical_code_review_comments": [
+    "Workspace.jsx PaymentTab escrow stages: `active: ws.payment_status === 'pending'` on the 'held' stage means the tracker previews the NEXT step as active instead of marking the current stage — potentially confusing.",
+    "api.js request wrapper likely throws the raw JSON error object; AuthPages.jsx catches with `e.message` which becomes '[object Object]' when detail is an array. Add helper: `errMsg(e) => Array.isArray(e.detail) ? e.detail[0].msg : (e.message || String(e))`.",
+    "server.py has grown to 800 lines with DEMO_USERS + DEMO_SHIFTS + seed_demo inlined — consider extracting to seed.py.",
+    "seed_demo() gate `existing >= len(DEMO_USERS)` skips seeding shifts if users already exist but shifts were deleted — currently OK because inner shift check also gates on count==0. Good.",
+    "PaymentTab computes stages inline every render — fine for now but could memoize.",
+    "CompletionModal fetches otherUser from Workspace state; if participants array is stale (e.g. same user id repeated due to bad seed), review submit hits `Cannot review yourself` 400 and throws uncaught. Add graceful UI error toast.",
+    "No size limit on file upload (base64 stored in Mongo) — noted in prev iteration, still open."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py"],
+  "success_rate": {"backend": "100% (28/28)", "frontend": "~95% (all core flows verified; 2 non-blocking UX issues)"},
+  "test_credentials": "alice+earn@test.sc / pw12345 (earner), bob+seek@test.sc / pw12345 (seeker). Fresh signups: use polish+{ts}@sctest.io (NOT .test — pydantic rejects reserved TLD).",
+  "seed_data_creation": "Backend startup idempotently seeds 4 demo users + 8 demo shifts (verified). Test suite creates TEST_-prefixed shifts + a fresh outsider signup + a fresh polish+{ts}@sctest.io signup + accepted several demo shifts. Wallet balance for Alice increased during test_pay_then_complete_releases_wallet.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend 28/28 pass. New tests added: test_welcome_chat_seeded_on_accept, test_pay_then_complete_releases_wallet, test_demo_seed_shifts_present, test_recommendations_returns_demo, and rewritten test_pay_mocked for held+receipt+double-payment. Frontend E2E verified: pay-btn only shows to owner (isOwner && pending) — that's correct product design, but the problem statement's E2E script assumed a fresh seeker signup could pay after accepting (which puts them in earner role, so pay-btn hidden). To exercise pay UI, log in as owner (Bob) and open a workspace where a shift was accepted. Payment card form pre-fills 4242 4242 4242 4242 / 12/28 / 123 — happy path works with defaults.",
+  "rca of the issue": "N/A — no P0/P1 bugs. Two minor UX issues (error render + .test TLD) surfaced only when literally following the problem statement's example email."
+}
