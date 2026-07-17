@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function Nav() {
@@ -54,21 +55,21 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <a
-            href="#audiences"
-            data-testid="nav-find-help-link"
+          <Link
+            to="/login"
+            data-testid="nav-signin-link"
             className="hidden sm:inline-block font-mono-accent text-[11px] uppercase tracking-[0.22em] text-white/70 hover:text-white transition-colors"
           >
-            Find Help
-          </a>
-          <a
-            href="#audiences"
+            Sign in
+          </Link>
+          <Link
+            to="/signup"
             data-testid="nav-start-earning-btn"
             className="group relative inline-flex items-center gap-2 bg-[#E4F222] text-[#08090a] px-4 md:px-5 py-2.5 font-mono-accent text-[11px] uppercase tracking-[0.22em] font-semibold hover:bg-white transition-colors"
           >
             Start Earning
             <span className="w-1.5 h-1.5 bg-[#08090a] group-hover:translate-x-0.5 transition-transform" />
-          </a>
+          </Link>
         </div>
       </div>
     </motion.header>
