@@ -8,12 +8,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-6 pb-14 border-b border-white/10">
           <div className="md:col-span-6">
             <div className="flex items-center gap-3">
-              <span className="relative w-6 h-6 grid place-items-center">
+              <span className="relative w-7 h-7 grid place-items-center shrink-0">
                 <span className="absolute inset-0 border border-white/30 rotate-45" />
                 <span className="w-1.5 h-1.5 bg-[#E4F222] rounded-full" />
               </span>
-              <span className="font-display text-xl tracking-tight">
-                Shift<span className="text-[#E4F222]">·</span>Change
+              <span className="font-brand text-2xl md:text-3xl tracking-normal leading-none text-white">
+                SHIFT<span className="text-[#E4F222]"> </span>CHANGE
               </span>
             </div>
             <p className="mt-8 font-display text-2xl md:text-4xl leading-[1.05] tracking-[-0.03em] text-white max-w-xl">
@@ -61,6 +61,17 @@ export default function Footer() {
             Movement · not a marketplace
           </span>
           <span>Made with intent · Not with templates</span>
+        </div>
+
+        {/* Signature giant wordmark */}
+        <div className="mt-16 md:mt-24 select-none pointer-events-none">
+          <div
+            className="font-brand text-white/[0.07] leading-none tracking-normal text-center"
+            style={{ fontSize: "clamp(4rem, 18vw, 22rem)" }}
+            aria-hidden
+          >
+            SHIFT CHANGE
+          </div>
         </div>
       </div>
     </footer>

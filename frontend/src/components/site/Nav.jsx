@@ -27,14 +27,14 @@ export default function Nav() {
         <a
           href="#top"
           data-testid="nav-logo"
-          className="flex items-center gap-2 group"
+          className="flex items-center gap-3 group"
         >
-          <span className="relative w-6 h-6 grid place-items-center">
+          <span className="relative w-6 h-6 grid place-items-center shrink-0">
             <span className="absolute inset-0 border border-white/30 rotate-45 group-hover:rotate-[135deg] transition-transform duration-700" />
             <span className="w-1.5 h-1.5 bg-[#E4F222] rounded-full" />
           </span>
-          <span className="font-display text-lg tracking-tight">
-            Shift<span className="text-[#E4F222]">·</span>Change
+          <span className="font-brand text-xl md:text-2xl tracking-normal leading-none text-white group-hover:text-[#E4F222] transition-colors">
+            SHIFT<span className="text-[#E4F222]"> </span>CHANGE
           </span>
         </a>
 
