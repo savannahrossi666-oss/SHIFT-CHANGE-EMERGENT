@@ -21,6 +21,7 @@ import { Profile, UserProfileView } from "@/app/Profile";
 import { ShiftsList, CreateShift, ShiftDetail } from "@/app/Shifts";
 import { WorkspacesList, Workspace } from "@/app/Workspace";
 import { Notifications, WalletPage } from "@/app/MiscPages";
+import { Assessment } from "@/app/Assessment";
 
 const Home = () => {
   useLenis();
@@ -41,7 +42,6 @@ const Home = () => {
 
 function AppRouter() {
   const location = useLocation();
-  // OAuth callback interception (dashboard route)
   if (location.hash?.includes("session_id=")) return <AuthCallback />;
   return (
     <Routes>
@@ -49,6 +49,7 @@ function AppRouter() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/assessment" element={<Assessment />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/u/:userId" element={<UserProfileView />} />
       <Route path="/shifts" element={<ShiftsList />} />
