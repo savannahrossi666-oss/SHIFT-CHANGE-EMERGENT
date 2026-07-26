@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import {
   LayoutDashboard, UserCircle2, Briefcase, Compass, Wallet, Bell,
-  MessagesSquare, LogOut, Plus, Search,
+  MessagesSquare, LogOut, Plus, Search, Sparkles,
 } from "lucide-react";
 
 export function AppShell({ children }) {
@@ -44,7 +44,6 @@ export function AppShell({ children }) {
 
   return (
     <div className="min-h-screen bg-[#08090a] text-white flex" data-testid="app-shell">
-      {/* Sidebar */}
       <aside className="hidden md:flex md:w-64 lg:w-72 shrink-0 flex-col border-r border-white/10 bg-[#0a0b0c] sticky top-0 h-screen">
         <Link to="/dashboard" className="flex items-center gap-3 px-6 py-6 border-b border-white/10 group">
           <span className="relative w-6 h-6 grid place-items-center shrink-0">
@@ -55,6 +54,7 @@ export function AppShell({ children }) {
         </Link>
         <nav className="flex-1 py-4">
           {nlink("/dashboard", "Dashboard", LayoutDashboard)}
+          {nlink("/assessment", "Skill Map", Sparkles)}
           {nlink("/profile", "Profile", UserCircle2)}
           {nlink("/shifts", "Browse", Compass)}
           {nlink("/shifts/mine", "My Shifts", Briefcase)}
@@ -82,7 +82,6 @@ export function AppShell({ children }) {
         </div>
       </aside>
 
-      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-40 bg-[#08090a]/85 backdrop-blur-xl border-b border-white/10 px-6 md:px-10 h-16 flex items-center gap-4">
           <form onSubmit={onSearch} className="flex-1 max-w-xl flex items-center gap-3 bg-white/[0.03] border border-white/10 hover:border-white/20 focus-within:border-[#E4F222] transition-colors px-4 py-2.5">
