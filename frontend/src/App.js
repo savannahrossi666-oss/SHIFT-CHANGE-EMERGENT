@@ -20,6 +20,7 @@ import { Dashboard } from "@/app/Dashboard";
 import { Profile, UserProfileView } from "@/app/Profile";
 import { ShiftsList, CreateShift, ShiftDetail } from "@/app/Shifts";
 import { WorkspacesList, Workspace } from "@/app/Workspace";
+import { WorkspacePreview } from "@/app/WorkspacePreview";
 import { Notifications, WalletPage } from "@/app/MiscPages";
 
 const Home = () => {
@@ -41,11 +42,11 @@ const Home = () => {
 
 function AppRouter() {
   const location = useLocation();
-  // OAuth callback interception (dashboard route)
   if (location.hash?.includes("session_id=")) return <AuthCallback />;
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/preview/workspace" element={<WorkspacePreview />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/dashboard" element={<Dashboard />} />
