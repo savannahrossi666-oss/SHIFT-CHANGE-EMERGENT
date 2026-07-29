@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
 import useLenis from "@/hooks/useLenis";
 
-// Public homepage (manifesto)
 import Nav from "@/components/site/Nav";
 import Hero from "@/components/site/Hero";
 import Problem from "@/components/site/Problem";
@@ -14,7 +13,6 @@ import Transformation from "@/components/site/Transformation";
 import Closing from "@/components/site/Closing";
 import Footer from "@/components/site/Footer";
 
-// App
 import { Login, Signup, AuthCallback } from "@/app/AuthPages";
 import { Dashboard } from "@/app/Dashboard";
 import { Profile, UserProfileView } from "@/app/Profile";
@@ -26,7 +24,7 @@ import { Notifications, WalletPage } from "@/app/MiscPages";
 const Home = () => {
   useLenis();
   return (
-    <main data-testid="home-page" className="relative bg-[#08090a] text-[#f7f8f8] overflow-x-hidden">
+    <main data-testid="home-page" className="relative text-[#f7f8f8] overflow-x-hidden">
       <Nav />
       <Hero />
       <Problem />
@@ -67,6 +65,10 @@ function AppRouter() {
 function App() {
   return (
     <div className="App">
+      <video className="site-video-background" autoPlay loop muted playsInline preload="auto" aria-hidden="true">
+        <source src="/webpage.mp4" type="video/mp4" />
+      </video>
+      <div className="site-video-grade" aria-hidden="true" />
       <AuthProvider>
         <BrowserRouter>
           <AppRouter />
