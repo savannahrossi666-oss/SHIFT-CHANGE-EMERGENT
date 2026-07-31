@@ -1,6 +1,46 @@
-/* App-level minimal styles. Layout handled by Tailwind utilities. */
+/* App-level styles. The homepage film now follows the user through the entire product. */
+html,
+body,
+#root,
 .App {
-    background: #08090a;
+    min-height: 100%;
+    background: transparent;
+}
+
+body {
     color: #f7f8f8;
+    background: #08090a;
+}
+
+.App {
+    position: relative;
     min-height: 100vh;
+    color: #f7f8f8;
+    isolation: isolate;
+}
+
+.App::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    background: #08090a;
+}
+
+.site-video-background {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -2;
+    pointer-events: none;
+}
+
+.site-video-grade {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(8,9,10,.48), rgba(8,9,10,.68));
 }
