@@ -1,4 +1,4 @@
-/* App-level styles. The homepage film now follows the user through the entire product. */
+/* App-level styles. The homepage film follows the user through the entire product. */
 html,
 body,
 #root,
@@ -42,5 +42,31 @@ body {
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(8,9,10,.48), rgba(8,9,10,.68));
+    background: linear-gradient(180deg, rgba(8, 9, 10, 0.42), rgba(8, 9, 10, 0.64));
+}
+
+/* Homepage sections previously painted solid black over the fixed film.
+   Keep the film continuous while preserving enough contrast for text. */
+main[data-testid="home-page"],
+main[data-testid="home-page"] section {
+    background-color: transparent !important;
+}
+
+main[data-testid="home-page"] section:not([data-testid="hero-section"]) {
+    background-image: linear-gradient(
+        180deg,
+        rgba(5, 6, 7, 0.62),
+        rgba(5, 6, 7, 0.48),
+        rgba(5, 6, 7, 0.62)
+    ) !important;
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+}
+
+/* Prevent nested full-width black layers from hiding the global video. */
+main[data-testid="home-page"] section > .absolute.inset-0.bg-black,
+main[data-testid="home-page"] section > .absolute.inset-0[class*="bg-[#0"],
+main[data-testid="home-page"] section > .absolute.inset-0[class*="bg-neutral"],
+main[data-testid="home-page"] section > .absolute.inset-0[class*="bg-zinc"] {
+    background-color: rgba(5, 6, 7, 0.42) !important;
 }
