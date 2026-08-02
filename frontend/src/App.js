@@ -5,13 +5,6 @@ import useLenis from "@/hooks/useLenis";
 
 import Nav from "@/components/site/Nav";
 import Hero from "@/components/site/Hero";
-import Problem from "@/components/site/Problem";
-import Shift from "@/components/site/Shift";
-import SplitCards from "@/components/site/SplitCards";
-import Mission from "@/components/site/Mission";
-import Transformation from "@/components/site/Transformation";
-import Closing from "@/components/site/Closing";
-import Footer from "@/components/site/Footer";
 
 import { Login, Signup, AuthCallback } from "@/app/AuthPages";
 import { Dashboard } from "@/app/Dashboard";
@@ -24,16 +17,9 @@ import { Notifications, WalletPage } from "@/app/MiscPages";
 const Home = () => {
   useLenis();
   return (
-    <main data-testid="home-page" className="relative text-[#f7f8f8] overflow-x-hidden">
+    <main data-testid="home-page" className="relative min-h-screen text-[#f7f8f8] overflow-hidden">
       <Nav />
       <Hero />
-      <Problem />
-      <Shift />
-      <SplitCards />
-      <Mission />
-      <Transformation />
-      <Closing />
-      <Footer />
     </main>
   );
 };
