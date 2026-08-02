@@ -10,6 +10,22 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: "Edge";
+    src: local("Edge"), url("./assets/Edge.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Effluent";
+    src: local("Effluent"), url("./assets/Effluent.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     color-scheme: dark;
 }
@@ -20,16 +36,23 @@ body {
     padding: 0;
     background: #08090a;
     color: #f7f8f8;
-    font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Edge", "Manrope", ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overscroll-behavior: none;
 }
 
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
 /* Selection */
 ::selection {
-    background: #e4f222;
+    background: rgba(255, 255, 255, 0.92);
     color: #08090a;
 }
 
@@ -72,26 +95,26 @@ html.lenis body {
         --card-foreground: 210 20% 97%;
         --popover: 220 6% 6%;
         --popover-foreground: 210 20% 97%;
-        --primary: 65 89% 54%;
+        --primary: 0 0% 96%;
         --primary-foreground: 220 6% 4%;
         --secondary: 220 6% 12%;
         --secondary-foreground: 210 20% 97%;
         --muted: 220 6% 10%;
         --muted-foreground: 240 5% 65%;
-        --accent: 65 89% 54%;
+        --accent: 0 0% 96%;
         --accent-foreground: 220 6% 4%;
         --destructive: 0 84% 60%;
         --destructive-foreground: 0 0% 98%;
         --border: 0 0% 100% / 0.1;
         --input: 220 6% 12%;
-        --ring: 65 89% 54%;
-        --radius: 0.25rem;
+        --ring: 0 0% 96%;
+        --radius: 0.75rem;
     }
 }
 
 @layer utilities {
     .font-display {
-        font-family: "Clash Display", "Manrope", sans-serif;
+        font-family: "Clash Display", "Edge", "Manrope", sans-serif;
         font-feature-settings: "ss01", "ss02";
     }
     .font-brand {
@@ -101,8 +124,10 @@ html.lenis body {
     .font-mono-accent {
         font-family: "JetBrains Mono", ui-monospace, monospace;
     }
-    .font-serif-accent {
-        font-family: "Instrument Serif", "Times New Roman", serif;
+    .font-serif-accent,
+    .font-effluent {
+        font-family: "Effluent", "Instrument Serif", "Times New Roman", serif;
+        font-weight: 400;
     }
 
     .text-balance {
@@ -114,7 +139,7 @@ html.lenis body {
         position: absolute;
         inset: 0;
         pointer-events: none;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitchTiles'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         opacity: 0.08;
         mix-blend-mode: overlay;
         z-index: 1;
