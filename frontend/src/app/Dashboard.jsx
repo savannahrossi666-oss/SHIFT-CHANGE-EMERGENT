@@ -117,3 +117,20 @@ function QuickCard({ icon: Icon, title, text, to }) {
     </Link>
   );
 }
+
+export function ShiftCard({ s }) {
+  return (
+    <Link to={`/shifts/${s.shift_id}`} data-testid={`shift-${s.shift_id}`} className="group rounded-2xl border border-white/12 bg-black/20 backdrop-blur-xl p-5 flex flex-col hover:bg-white/[0.08] hover:border-white/25 transition-all">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10px] uppercase tracking-[0.22em] text-white/55">{s.kind}</span>
+        <span className="text-[10px] uppercase tracking-[0.22em] text-white/45">{s.status}</span>
+      </div>
+      <h3 className="font-display text-xl leading-tight line-clamp-2">{s.title}</h3>
+      <p className="mt-2 text-white/50 text-sm line-clamp-2 flex-1">{s.description}</p>
+      <div className="mt-5 flex items-center justify-between">
+        <span className="font-display text-lg">${s.price}<span className="text-[10px] uppercase tracking-[0.2em] text-white/40 ml-1">{s.currency}</span></span>
+        <ArrowUpRight className="w-4 h-4 text-white/35 group-hover:text-white group-hover:rotate-45 transition-all" />
+      </div>
+    </Link>
+  );
+}
