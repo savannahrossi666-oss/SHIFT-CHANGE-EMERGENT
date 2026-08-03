@@ -120,15 +120,21 @@ html.lenis body {
 
 @layer utilities {
     .font-display {
-        font-family: "Manrope", Inter, ui-sans-serif, system-ui, sans-serif;
-        font-weight: 700;
-        letter-spacing: -0.045em;
-        line-height: 0.95;
+        font-family: "SSRansom", "Manrope", Inter, sans-serif;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.035em;
+        line-height: 0.94;
+        transform: scaleY(0.86);
+        transform-origin: center;
     }
     .font-brand {
         font-family: "SSRansom", "FunGames", sans-serif;
         font-weight: 400;
-        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        transform: scaleY(0.88);
+        transform-origin: center;
     }
     .font-mono-accent {
         font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -170,6 +176,12 @@ html.lenis body {
     .radial-fade {
         mask-image: radial-gradient(ellipse at center, #000 40%, transparent 78%);
         -webkit-mask-image: radial-gradient(ellipse at center, #000 40%, transparent 78%);
+    }
+}
+
+@media (max-height: 760px) {
+    .font-display {
+        line-height: 0.9;
     }
 }
 
