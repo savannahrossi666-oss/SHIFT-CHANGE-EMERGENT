@@ -11,32 +11,8 @@
 }
 
 @font-face {
-    font-family: "Vibrocen";
-    src: url("./assets/vibrocen.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
     font-family: "SSRansom";
     src: url("./assets/SS Ransom.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Recharge";
-    src: url("./assets/recharge bd.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "DataUnifon";
-    src: url("./assets/data-unifon.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -60,10 +36,10 @@ body {
     padding: 0;
     background: #08090a;
     color: #f7f8f8;
-    font-family: "Vibrocen", "Manrope", ui-sans-serif, system-ui, sans-serif;
-    font-size: 17px;
-    line-height: 1.58;
-    letter-spacing: 0.012em;
+    font-family: "Manrope", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -79,8 +55,8 @@ select {
 
 button,
 [role="button"] {
-    font-family: "Recharge", "Vibrocen", ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: 0.08em;
+    font-family: "Manrope", Inter, ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.04em;
 }
 
 ::selection {
@@ -144,19 +120,19 @@ html.lenis body {
 
 @layer utilities {
     .font-display {
-        font-family: "SSRansom", "Vibrocen", sans-serif;
-        font-weight: 400;
-        letter-spacing: 0.015em;
-        line-height: 0.92;
+        font-family: "Manrope", Inter, ui-sans-serif, system-ui, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.045em;
+        line-height: 0.95;
     }
     .font-brand {
         font-family: "SSRansom", "FunGames", sans-serif;
         font-weight: 400;
-        letter-spacing: 0.025em;
+        letter-spacing: 0.02em;
     }
     .font-mono-accent {
-        font-family: "DataUnifon", "Recharge", ui-monospace, monospace;
-        letter-spacing: 0.08em;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        letter-spacing: 0.06em;
     }
     .font-serif-accent,
     .font-effluent {
