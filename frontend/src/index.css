@@ -11,11 +11,8 @@
 }
 
 @font-face {
-    font-family: "MarsLanding";
-    src:
-        local("Mars Landing"),
-        url("./assets/Mars Landing.ttf") format("truetype"),
-        url("./assets/MarsLanding.ttf") format("truetype");
+    font-family: "NewAcademy";
+    src: url("./assets/NEW ACADEMY.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -23,9 +20,7 @@
 
 @font-face {
     font-family: "DashHorizon";
-    src:
-        local("Dash Horizon"),
-        url("./assets/Dash-Horizon-Demo.otf") format("opentype");
+    src: url("./assets/Dash-Horizon-Demo.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -50,7 +45,6 @@
 @font-face {
     font-family: "Effluent";
     src:
-        local("Effluent"),
         url("./assets/Effluent.ttf") format("truetype"),
         url("./assets/Effluent(1).ttf") format("truetype");
     font-weight: 400;
@@ -68,7 +62,7 @@ body {
     padding: 0;
     background: #08090a;
     color: #f7f8f8;
-    font-family: "MarsLanding", "DashHorizon", "Manrope", ui-sans-serif, system-ui, sans-serif;
+    font-family: "NewAcademy", "Manrope", ui-sans-serif, system-ui, sans-serif;
     line-height: 1.55;
     letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
@@ -86,17 +80,15 @@ select {
 
 button,
 [role="button"] {
-    font-family: "Recharge", "MarsLanding", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Recharge", "NewAcademy", ui-sans-serif, system-ui, sans-serif;
     letter-spacing: 0.08em;
 }
 
-/* Selection */
 ::selection {
     background: rgba(255, 255, 255, 0.92);
     color: #08090a;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -112,7 +104,6 @@ button,
     background: #2a2b2c;
 }
 
-/* Lenis smooth scroll */
 html.lenis,
 html.lenis body {
     height: auto;
@@ -154,7 +145,7 @@ html.lenis body {
 
 @layer utilities {
     .font-display {
-        font-family: "DashHorizon", "MarsLanding", "Clash Display", sans-serif;
+        font-family: "DashHorizon", "NewAcademy", "Clash Display", sans-serif;
         font-feature-settings: "ss01", "ss02";
         letter-spacing: 0.01em;
     }
@@ -205,7 +196,6 @@ html.lenis body {
     }
 }
 
-/* Reduced motion respect */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
