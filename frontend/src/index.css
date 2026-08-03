@@ -11,8 +11,37 @@
 }
 
 @font-face {
-    font-family: "Edge";
-    src: local("Edge"), url("./assets/Edge.ttf") format("truetype");
+    font-family: "MarsLanding";
+    src:
+        local("Mars Landing"),
+        url("./assets/Mars Landing.ttf") format("truetype"),
+        url("./assets/MarsLanding.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "DashHorizon";
+    src:
+        local("Dash Horizon"),
+        url("./assets/Dash-Horizon-Demo.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Recharge";
+    src: url("./assets/recharge bd.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "DataUnifon";
+    src: url("./assets/data-unifon.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -20,7 +49,10 @@
 
 @font-face {
     font-family: "Effluent";
-    src: local("Effluent"), url("./assets/Effluent.ttf") format("truetype");
+    src:
+        local("Effluent"),
+        url("./assets/Effluent.ttf") format("truetype"),
+        url("./assets/Effluent(1).ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -36,7 +68,9 @@ body {
     padding: 0;
     background: #08090a;
     color: #f7f8f8;
-    font-family: "Edge", "Manrope", ui-sans-serif, system-ui, sans-serif;
+    font-family: "MarsLanding", "DashHorizon", "Manrope", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -48,6 +82,12 @@ input,
 textarea,
 select {
     font: inherit;
+}
+
+button,
+[role="button"] {
+    font-family: "Recharge", "MarsLanding", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.08em;
 }
 
 /* Selection */
@@ -114,15 +154,17 @@ html.lenis body {
 
 @layer utilities {
     .font-display {
-        font-family: "Clash Display", "Edge", "Manrope", sans-serif;
+        font-family: "DashHorizon", "MarsLanding", "Clash Display", sans-serif;
         font-feature-settings: "ss01", "ss02";
+        letter-spacing: 0.01em;
     }
     .font-brand {
-        font-family: "FunGames", "Clash Display", sans-serif;
+        font-family: "FunGames", "DashHorizon", sans-serif;
         letter-spacing: 0.02em;
     }
     .font-mono-accent {
-        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-family: "DataUnifon", "Recharge", ui-monospace, monospace;
+        letter-spacing: 0.08em;
     }
     .font-serif-accent,
     .font-effluent {
