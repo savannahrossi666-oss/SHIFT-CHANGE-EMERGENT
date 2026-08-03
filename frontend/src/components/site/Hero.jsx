@@ -3,12 +3,6 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 
-const examples = [
-  "I make beats and want to earn $200 this weekend.",
-  "I have a truck and four free hours today.",
-  "I can tutor algebra for $40 an hour.",
-];
-
 export default function Hero() {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState("");
@@ -23,70 +17,43 @@ export default function Hero() {
     <section
       id="top"
       data-testid="hero-section"
-      className="relative min-h-[100svh] w-full overflow-hidden flex items-center justify-center px-5 pt-24 pb-8"
+      className="relative h-[100svh] w-full overflow-hidden flex items-center justify-center px-5 pt-20 pb-5"
     >
-      <div className="absolute inset-0 bg-black/45" />
+      <div className="absolute inset-0 bg-black/42" />
       <div className="absolute inset-0 grain pointer-events-none opacity-20" />
 
       <motion.div
-        initial={{ opacity: 0, y: 18 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 w-full max-w-4xl text-center"
+        transition={{ duration: 0.7 }}
+        className="relative z-10 w-full max-w-4xl text-center flex flex-col items-center justify-center"
       >
-        <p className="font-mono-accent text-[10px] md:text-xs uppercase tracking-[0.24em] text-white/60">
-          Earn money with what you already know how to do
-        </p>
-
-        <h1 className="font-display font-medium text-white text-[clamp(2.8rem,7vw,6.7rem)] leading-[0.95] tracking-[-0.04em] mt-5">
-          Stop looking for work.
-          <span className="block mt-2">Start creating opportunity.</span>
+        <h1 className="font-display uppercase text-white text-[clamp(2.5rem,6.2vw,5.7rem)] leading-[0.94] tracking-[0.035em] max-w-4xl">
+          Why look for work when you can create opportunities that pay?
         </h1>
 
-        <div className="mt-7 md:mt-9 rounded-3xl border border-white/20 bg-black/25 backdrop-blur-2xl p-4 md:p-6 shadow-2xl text-left">
-          <div className="flex items-center justify-center gap-2 text-white/60 text-[10px] md:text-xs uppercase tracking-[0.2em]">
-            <Sparkles className="w-4 h-4" /> Shift AI
-          </div>
-
-          <h2 className="mt-4 text-center text-xl md:text-3xl font-medium leading-snug max-w-3xl mx-auto">
-            Tell me what you can create or do, and how much you are looking to make.
-          </h2>
-
-          <form onSubmit={submit} className="mt-5">
-            <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-3 focus-within:border-white/35 transition-colors">
-              <textarea
-                value={prompt}
-                onChange={(event) => setPrompt(event.target.value)}
-                placeholder="Example: I edit videos and want to make $150 today."
-                rows={2}
-                className="w-full resize-none bg-transparent outline-none px-2 py-2 text-center text-base md:text-lg placeholder:text-white/35"
-              />
-              <div className="mt-2 flex justify-center">
-                <button className="group rounded-xl bg-white text-black px-5 py-3 text-sm font-semibold inline-flex items-center gap-2 hover:bg-white/85 transition-colors">
-                  Build my opportunity profile
-                  <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
-                </button>
-              </div>
+        <form onSubmit={submit} className="mt-6 w-full max-w-3xl">
+          <div className="rounded-2xl border border-white/20 bg-black/30 backdrop-blur-xl p-3 md:p-4 shadow-2xl">
+            <div className="flex items-center justify-center gap-2 text-white/60 text-[10px] uppercase tracking-[0.18em]">
+              <Sparkles className="w-3.5 h-3.5" /> Shift AI
             </div>
-          </form>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {examples.map((example) => (
-              <button
-                key={example}
-                type="button"
-                onClick={() => setPrompt(example)}
-                className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-2 text-xs text-white/60 hover:bg-white/[0.1] hover:text-white transition-colors"
-              >
-                {example}
+            <textarea
+              value={prompt}
+              onChange={(event) => setPrompt(event.target.value)}
+              placeholder="Tell me what you can create or do, and how much you want to make."
+              rows={2}
+              className="mt-3 w-full resize-none bg-transparent outline-none px-3 py-2 text-center text-base md:text-lg leading-snug placeholder:text-white/40"
+            />
+
+            <div className="mt-2 flex justify-center">
+              <button className="group rounded-xl bg-white text-black px-5 py-3 text-sm font-semibold inline-flex items-center gap-2 hover:bg-white/85 transition-colors">
+                Build my opportunity profile
+                <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
               </button>
-            ))}
+            </div>
           </div>
-        </div>
-
-        <p className="mt-5 text-[10px] md:text-xs uppercase tracking-[0.2em] text-white/45">
-          Simple by default. Powerful by choice.
-        </p>
+        </form>
       </motion.div>
     </section>
   );
