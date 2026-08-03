@@ -11,8 +11,8 @@
 }
 
 @font-face {
-    font-family: "Aetherius";
-    src: url("./assets/Aetherius.ttf") format("truetype");
+    font-family: "Vibrocen";
+    src: url("./assets/vibrocen.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -60,9 +60,9 @@ body {
     padding: 0;
     background: #08090a;
     color: #f7f8f8;
-    font-family: "Aetherius", "Manrope", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Vibrocen", "Manrope", ui-sans-serif, system-ui, sans-serif;
     font-size: 17px;
-    line-height: 1.62;
+    line-height: 1.58;
     letter-spacing: 0.012em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -79,7 +79,7 @@ select {
 
 button,
 [role="button"] {
-    font-family: "Recharge", "Aetherius", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Recharge", "Vibrocen", ui-sans-serif, system-ui, sans-serif;
     letter-spacing: 0.08em;
 }
 
@@ -144,7 +144,7 @@ html.lenis body {
 
 @layer utilities {
     .font-display {
-        font-family: "SSRansom", "Aetherius", sans-serif;
+        font-family: "SSRansom", "Vibrocen", sans-serif;
         font-weight: 400;
         letter-spacing: 0.015em;
         line-height: 0.92;
