@@ -38,10 +38,14 @@ export default function Hero() {
               <Sparkles className="w-3.5 h-3.5" /> Shift AI
             </div>
 
+            <h2 className="mt-3 text-center text-lg md:text-2xl font-medium leading-snug">
+              What can you create or do, and for how much?
+            </h2>
+
             <textarea
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
-              placeholder="Tell me what you can create or do, and how much you want to make."
+              placeholder="I make trap beats and want to earn $300 this weekend."
               rows={2}
               className="mt-3 w-full resize-none bg-transparent outline-none px-3 py-2 text-center text-base md:text-lg leading-snug placeholder:text-white/40"
             />
